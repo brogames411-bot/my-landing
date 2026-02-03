@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telegram-боты под ключ — проверка подписки и выдача файла</title>
+  <meta name="description" content="Сделаю Telegram-бота: проверка подписки на канал, выдача файла/доступа, запуск 24/7. Быстро и под ключ." />
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111a2e;
+      --text:#eaf0ff;
+      --muted:#a8b3d6;
+      --accent:#5b8cff;
+      --accent2:#33d6a6;
+      --danger:#ff5b7a;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(91,140,255,.35), transparent 60%),
+                  radial-gradient(900px 500px at 90% 0%, rgba(51,214,166,.25), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;padding:14px 0;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .logo{
+      width:36px;height:36px;border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: var(--shadow);
+    }
+    .nav a{opacity:.9;text-decoration:none}
+    .navlinks{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      padding:10px 14px;border-radius:12px;
+      text-decoration:none;display:inline-flex;gap:8px;align-items:center;
+      transition:.15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent), #7aa2ff);
+      border: none;
+    }
+    .btn.primary:hover{filter: brightness(1.05)}
+    .btn.green{
+      background: linear-gradient(135deg, var(--accent2), #6ef0ca);
+      border: none;
+      color:#061017;
+      font-weight:700;
+    }
+    .hero{
+      display:grid;grid-template-columns: 1.2fr .8fr;
+      gap:18px;align-items:stretch;margin-top:10px;
+    }
+    @media (max-width: 900px){ .hero{grid-template-columns:1fr} }
+    .card{
+      background: rgba(17,26,46,.82);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:0 0 10px;font-size: 40px;line-height:1.05}
+    @media (max-width: 520px){ h1{font-size: 34px} }
+    .muted{color:var(--muted)}
+    .badges{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+    .badge{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      padding:7px 10px;border-radius:999px;
+      font-size:13px;
+    }
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    @media (max-width: 900px){ .grid3{grid-template-columns:1fr} }
+    .feature{padding:14px;border-radius:16px;background: rgba(255,255,255,.05);border:1px solid var(--border)}
+    .feature b{display:block;margin-bottom:6px}
+    .price{
+      display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin:10px 0 2px
+    }
+    .price .num{font-size:34px;font-weight:900}
+    .hr{height:1px;background: var(--border);margin:14px 0}
+    .list{margin:0;padding-left:18px;color:var(--muted)}
+    .list li{margin:7px 0}
+    .section{margin-top:16px}
+    .section h2{margin:0 0 10px;font-size:22px}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media (max-width: 900px){ .steps{grid-template-columns:1fr} }
+    .step{padding:14px;border-radius:16px;background: rgba(255,255,255,.05);border:1px solid var(--border)}
+    .step .n{width:28px;height:28px;border-radius:10px;background: rgba(91,140,255,.25);
+      display:grid;place-items:center;font-weight:800;margin-bottom:8px;border:1px solid var(--border)}
+    .footer{margin:26px 0 10px;color:var(--muted);font-size:14px;text-align:center}
+    .small{font-size:13px;color:var(--muted)}
+    .input{
+      width:100%;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--border);background: rgba(255,255,255,.06);
+      color: var(--text);outline:none;
+    }
+    textarea.input{min-height:110px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 520px){ .row{grid-template-columns:1fr} }
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:10px 12px;border-radius:999px;border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>Dev • Telegram & Web</div>
+      </div>
+      <div class="navlinks">
+        <a class="btn" href="#cases">Что делаю</a>
+        <a class="btn" href="#price">Цены</a>
+        <a class="btn" href="#contact">Контакты</a>
+        <a class="btn green" id="tgTop" href="#">Написать в Telegram</a>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="card">
+        <h1>Сайт/бот “под ключ” для вашего канала</h1>
+        <p class="muted">
+          Делаю Telegram-ботов с проверкой подписки и выдачей файла/доступа, а также простые сайты-визитки.
+          Быстро, аккуратно, с запуском 24/7.
+        </p>
+
+        <div class="badges">
+          <div class="badge">✅ Проверка подписки</div>
+          <div class="badge">🎁 Выдача файла</div>
+          <div class="badge">📩 Рассылки (опционально)</div>
+          <div class="badge">🚀 Деплой 24/7</div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+          <a class="btn primary" href="#contact">Заказать проект</a>
+          <a class="btn" href="#cases">Посмотреть функционал</a>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid3" id="cases">
+          <div class="feature">
+            <b>Бот подписки → подарок</b>
+            <div class="small">Проверка подписки на канал + кнопка “Получить файл”.</div>
+          </div>
+          <div class="feature">
+            <b>Лендинг/визитка</b>
+            <div class="small">Одностраничный сайт для услуг, лидов и контактов.</div>
+          </div>
+          <div class="feature">
+            <b>Автоматизация</b>
+            <div class="small">Скрипты на Python: парсинг, Excel, обработка данных.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="price">
+        <h2>Цены</h2>
+        <div class="price">
+          <div class="num">от 1800 ₽</div>
+          <div class="muted">за базового бота “подписка → файл”</div>
+        </div>
+        <ul class="list">
+          <li>Под ваш канал/файл</li>
+          <li>Кнопки “Подписаться/Проверить/Получить”</li>
+          <li>Запуск на сервере (опционально)</li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <div class="pill">⚡ Срок: обычно 1–2 дня</div>
+        <div style="height:10px"></div>
+        <div class="pill">🛡 Безопасно: токены через ENV</div>
+      </div>
+    </div>
+
+    <div class="card section">
+      <h2>Как работаем</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <b>Вы пишете задачу</b>
+          <div class="small">Что нужно: канал, файл, дополнительные функции.</div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <b>Я делаю и показываю демо</b>
+          <div class="small">Согласуем тексты и кнопки.</div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <b>Запуск 24/7</b>
+          <div class="small">Разворачиваем на хостинге/сервере.</div>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <b>Сдача + инструкция</b>
+          <div class="small">Получаете доступ и краткую инструкцию.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section" id="contact">
+      <h2>Заказать</h2>
+      <p class="muted">Оставь заявку — откроется Telegram с готовым сообщением.</p>
+
+      <div class="row">
+        <input class="input" id="name" placeholder="Имя (необязательно)" />
+        <input class="input" id="niche" placeholder="Ниша/тема (например: курсы, крипта)" />
+      </div>
+      <div style="height:10px"></div>
+      <textarea class="input" id="task" placeholder="Опиши задачу: какой бот/сайт нужен, что выдавать, какие кнопки и т.д."></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <a class="btn green" id="tgBtn" href="#">Отправить в Telegram</a>
+        <a class="btn" id="copyBtn" href="#">Скопировать текст</a>
+      </div>
+
+      <div class="hr"></div>
+      <div class="small">
+        🔧 Подсказка: если нужен бот “подписка → файл”, обычно достаточно: ссылка на канал + файл + токен BotFather.
+      </div>
+    </div>
+
+    <div class="footer">© <span id="year"></span> • Сделано на HTML/CSS • Быстро загружается</div>
+  </div>
+
+  <script>
+    // ВСТАВЬ СЮДА СВОЙ TG ЮЗЕРНЕЙМ (без @)
+    const TG_USERNAME = "your_username_here";
+
+    const yearEl = document.getElementById("year");
+    yearEl.textContent = new Date().getFullYear();
+
+    function buildMessage() {
+      const name = (document.getElementById("name").value || "").trim();
+      const niche = (document.getElementById("niche").value || "").trim();
+      const task = (document.getElementById("task").value || "").trim();
+
+      const lines = [];
+      lines.push("Привет! Хочу заказать проект:");
+      if (name) lines.push(`Имя: ${name}`);
+      if (niche) lines.push(`Ниша: ${niche}`);
+      if (task) lines.push(`Задача: ${task}`);
+      lines.push("");
+      lines.push("Интересует стоимость и сроки.");
+
+      return lines.join("\n");
+    }
+
+    function tgLink(text) {
+      const encoded = encodeURIComponent(text);
+      return `https://t.me/${TG_USERNAME}?text=${encoded}`;
+    }
+
+    const tgTop = document.getElementById("tgTop");
+    const tgBtn = document.getElementById("tgBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function setLinks() {
+      const msg = buildMessage();
+      const link = tgLink(msg);
+      tgBtn.href = link;
+      tgTop.href = tgLink("Привет! Хочу заказать Telegram-бота/сайт. Подскажи цену и сроки.");
+    }
+
+    setLinks();
+    ["name","niche","task"].forEach(id => {
+      document.getElementById(id).addEventListener("input", setLinks);
+    });
+
+    copyBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const msg = buildMessage();
+      navigator.clipboard.writeText(msg).then(() => {
+        copyBtn.textContent = "✅ Скопировано";
+        setTimeout(() => (copyBtn.textContent = "Скопировать текст"), 1200);
+      });
+    });
+  </script>
+</body>
+</html>
